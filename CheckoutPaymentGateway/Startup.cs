@@ -97,6 +97,7 @@
                 app.UseMiddleware<ExceptionHandlingMiddleware>();
                 _logger.LogInformation("Using exception handling middleware.");
 
+                // Exports metrics on /metrics
                 app.UseMetricServer();
                 _logger.LogInformation("Using metrics exporter middleware.");
 
