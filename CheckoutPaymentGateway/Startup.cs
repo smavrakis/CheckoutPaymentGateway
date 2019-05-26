@@ -5,7 +5,6 @@
     using Extensions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
@@ -77,22 +76,8 @@
             {
                 applicationLifetime.ApplicationStopped.Register(OnShutdown);
 
-                if (!env.IsDevelopment())
-                {
-                    // We can safely remove this and https redirection if we're planning to add a reverse proxy
-                    // with tls/ssl termination in front of this gateway.
-                    app.UseHsts();
-                    _logger.LogInformation("Using HSTS middleware.");
-                }
-
-                app.UseHttpsRedirection();
-                _logger.LogInformation("Using HTTPS redirection middleware.");
-
-                app.UseForwardedHeaders(new ForwardedHeadersOptions
-                {
-                    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-                });
-                _logger.LogInformation("Using forwarded headers middleware.");
+                // In production we might add HSTS and HTTPS redirection here if we don't have TLS
+                // termination via a reverse proxy.
 
                 app.UseMiddleware<ExceptionHandlingMiddleware>();
                 _logger.LogInformation("Using exception handling middleware.");

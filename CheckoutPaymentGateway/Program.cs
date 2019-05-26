@@ -1,8 +1,9 @@
 ﻿namespace CheckoutPaymentGateway
 {
     using System;
-    using Microsoft.AspNetCore;
+    using System.IO;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Server.Kestrel.Core;
     using Microsoft.Extensions.Configuration;
     using Serilog;
 
@@ -15,11 +16,12 @@
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
-            // The default builder is used due to lack of time. To make the app
-            // production ready we need to configure it further.
-            var builder = WebHost.CreateDefaultBuilder(args);
+            // To make the app production ready we need to configure the WebHostBuilder further.
+            var builder = new WebHostBuilder();
 
+            builder.UseContentRoot(Directory.GetCurrentDirectory());
             builder.ConfigureAppConfiguration(ConfigureAppConfiguration());
+            builder.UseKestrel(ConfigureKestrel());
             builder.UseSerilog(ConfigureSeriLog());
             builder.UseStartup<Startup>();
 
@@ -34,6 +36,14 @@
                 config.AddJsonFile($"appsettings.{hostBuilderContext.HostingEnvironment.EnvironmentName}.json", true, true);
                 // This will be added by the orchestrator (kubernetes?) in production
                 config.AddJsonFile("secrets/appsettings.secrets.json", optional: true, reloadOnChange: true);
+            };
+        }
+
+        private static Action<WebHostBuilderContext, KestrelServerOptions> ConfigureKestrel()
+        {
+            return (hostBuilderContext, options) =>
+            {
+                options.Configure(hostBuilderContext.Configuration.GetSection("Kestrel"));
             };
         }
 
