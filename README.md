@@ -16,9 +16,9 @@ Example request body:
 
 ```JSON
 {
-	"CreditCardNumber": "4865395731835267",
+	"CreditCardNumber": "4532-3214-9652-4199",
 	"CreditCardExpiryMonth": 12,
-	"CreditCardExpiryYear": 2022,
+	"CreditCardExpiryYear": 22,
 	"CreditCardCvv": 345,
 	"Amount": 1500,
 	"Currency": "EUR"
@@ -42,9 +42,9 @@ Example response:
 ```JSON
 {    
     "id": 1,
-    "creditCardNumber": "************5267",
+    "creditCardNumber": "************4199",
     "creditCardExpiryMonth": 12,
-    "creditCardExpiryYear": 2022,
+    "creditCardExpiryYear": 22,
     "creditCardCvv": 345,
     "amount": 1500,
     "currency": "EUR",

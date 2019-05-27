@@ -1,6 +1,7 @@
 ﻿namespace CheckoutPaymentGateway.Controllers
 {
     using System;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Common;
@@ -37,6 +38,11 @@
             {
                 _logger.LogInformation("Received a request on route {ApiRoute} with http verb {HttpVerb}.", apiRoute, httpVerb);
                 RequestsReceivedCounter.WithLabels(apiRoute, httpVerb).Inc();
+
+                if (transactionId == Guid.Empty)
+                {
+                    throw new ArgumentException("Missing transaction ID.");
+                }
 
                 var payment = await _paymentsService.GetPaymentAsync(transactionId, cancellationToken);
                 if (payment == null)
@@ -81,6 +87,7 @@
                     throw new ArgumentNullException(nameof(paymentRequest));
                 }
 
+                paymentRequest.CreditCardNumber = NormalizeCreditCardNumber(paymentRequest.CreditCardNumber);
                 var bankResponse = await _bankService.ProcessTransactionAsync(paymentRequest, cancellationToken);
 
                 // This is NOT production-ready. From the minimal research I've done on the topic, we're not supposed to store credit card info
@@ -106,6 +113,18 @@
 
                 return bankResponse;
             }
+        }
+
+        private static string NormalizeCreditCardNumber(string creditCardNumber)
+        {
+            // Not sure if valid credit card numbers can contain anything else besides
+            // spaces, dashes and numbers. Need to do some research on this.
+            var sb = new StringBuilder(creditCardNumber);
+
+            sb.Replace(" ", "");
+            sb.Replace("-", "");
+
+            return sb.ToString();
         }
     }
 }

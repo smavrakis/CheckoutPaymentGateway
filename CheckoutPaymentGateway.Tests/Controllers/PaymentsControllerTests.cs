@@ -181,7 +181,7 @@
                 CreditCardNumber = "8584739205746324",
                 CreditCardCvv = 567,
                 CreditCardExpiryMonth = 12,
-                CreditCardExpiryYear = 2020,
+                CreditCardExpiryYear = 20,
                 Currency = "USD"
             };
 
@@ -212,6 +212,8 @@
             Assert.Equal(paymentRequest.CreditCardNumber, paymentToTest.CreditCardNumber);
             Assert.Equal(paymentRequest.Currency, paymentToTest.Currency);
         }
+
+        // TODO: Add validation tests for the POST API
 
         private static Payment CreateTestPayment(PaymentGatewayDbContext dbContext)
         {

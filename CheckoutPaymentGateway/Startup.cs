@@ -1,10 +1,12 @@
 ﻿namespace CheckoutPaymentGateway
 {
     using System;
+    using System.Globalization;
     using Data;
     using Extensions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Localization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Data.Sqlite;
     using Microsoft.EntityFrameworkCore;
@@ -81,6 +83,14 @@
 
                 app.UseMiddleware<ExceptionHandlingMiddleware>();
                 _logger.LogInformation("Using exception handling middleware.");
+
+                var supportedCultures = new[] { new CultureInfo("en-US") };
+                app.UseRequestLocalization(new RequestLocalizationOptions
+                {
+                    DefaultRequestCulture = new RequestCulture("en-US"),
+                    SupportedCultures = supportedCultures
+                });
+                _logger.LogInformation("Using request localization middleware.");
 
                 // Exports metrics on /metrics
                 app.UseMetricServer();
